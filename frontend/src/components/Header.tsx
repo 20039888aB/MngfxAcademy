@@ -47,12 +47,25 @@ const Header = () => {
           <Link href="/" className={isActive('/') ? 'nav-active' : ''}>
             Home
           </Link>
-          <Link href="/market" className={isActive('/market') ? 'nav-active' : ''}>
-            Live Charts
-          </Link>
-          <Link href="/chat" className={isActive('/chat') ? 'nav-active' : ''}>
-            AI Assistant
-          </Link>
+          {status === 'authenticated' && (
+            <>
+              <Link href="/market" className={isActive('/market') ? 'nav-active' : ''}>
+                Live Charts
+              </Link>
+              <Link href="/resources" className={isActive('/resources') ? 'nav-active' : ''}>
+                Resources
+              </Link>
+              <Link href="/analytics" className={isActive('/analytics') ? 'nav-active' : ''}>
+                Analytics
+              </Link>
+              <Link href="/profile" className={isActive('/profile') ? 'nav-active' : ''}>
+                Profile
+              </Link>
+              <Link href="/chat" className={isActive('/chat') ? 'nav-active' : ''}>
+                AI Assistant
+              </Link>
+            </>
+          )}
         </nav>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -65,6 +78,9 @@ const Header = () => {
             >
               {status === 'authenticated' ? 'Sign out' : 'Sign in'}
             </button>
+          )}
+          {status === 'authenticated' && session?.user?.name && (
+            <span style={{ fontSize: '0.9rem', color: '#64748b' }}>{session.user.name}</span>
           )}
         </div>
       </div>

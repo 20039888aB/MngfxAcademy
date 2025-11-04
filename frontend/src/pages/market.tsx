@@ -1,8 +1,23 @@
 import Head from 'next/head';
 
 import LiveChart from '@/components/LiveChart';
+import { useRequireAuth } from '@/hooks/useRequireAuth';
 
 const MarketPage = () => {
+  const status = useRequireAuth();
+
+  if (status === 'loading') {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <span>Preparing live markets…</span>
+      </div>
+    );
+  }
+
+  if (status !== 'authenticated') {
+    return null;
+  }
+
   return (
     <>
       <Head>

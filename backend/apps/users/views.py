@@ -1,11 +1,15 @@
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from .models import Profile, ProgressSnapshot
+from .serializers import ProfileSerializer, ProgressSnapshotSerializer
 
 User = get_user_model()
 
@@ -115,4 +119,41 @@ def social_exchange(request):
 
     tokens = _issue_tokens_for_user(user, provider=provider)
     return Response(tokens)
+
+
+class ProfileView(generics.RetrieveUpdateAPIView):
+    serializer_class = ProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get_object(self) -> Profile:
+        profile, _ = Profile.objects.get_or_create(user=self.request.user)
+        return profile
+
+
+class ProgressSnapshotView(generics.ListCreateAPIView):
+    serializer_class = ProgressSnapshotSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return ProgressSnapshot.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class ProgressSummaryView(generics.GenericAPIView):
+    serializer_class = ProgressSnapshotSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        latest = request.user.progress_snapshots.order_by("-created_at").first()
+        history = request.user.progress_snapshots.order_by("-created_at")[:10]
+        return Response(
+            {
+                "latest": ProgressSnapshotSerializer(latest).data if latest else None,
+                "history": ProgressSnapshotSerializer(history, many=True).data,
+            },
+            status=status.HTTP_200_OK,
+        )
 

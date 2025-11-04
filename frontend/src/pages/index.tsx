@@ -1,9 +1,26 @@
 import Head from 'next/head';
+import { useSession } from 'next-auth/react';
 
 import Hero from '@/components/Hero';
 import TradingViewEmbed from '@/components/TradingViewEmbed';
+import { useRequireAuth } from '@/hooks/useRequireAuth';
 
 const HomePage = () => {
+  const status = useRequireAuth();
+  const { data: session } = useSession();
+
+  if (status === 'loading') {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <span>Loading dashboard…</span>
+      </div>
+    );
+  }
+
+  if (status !== 'authenticated') {
+    return null;
+  }
+
   return (
     <>
       <Head>
@@ -16,7 +33,7 @@ const HomePage = () => {
       <Hero />
 
       <section className="container" style={{ paddingBottom: '4rem' }}>
-        <h2 className="section-title">TradingView Pulse</h2>
+        <h2 className="section-title">TradingView Pulse{session?.user?.name ? ` — Welcome back, ${session.user.name}` : ''}</h2>
         <p className="section-subtitle">
           Monitor institutional-grade charts with your favorite indicators. Switch to the Live Charts section for our
           proprietary candle stream.

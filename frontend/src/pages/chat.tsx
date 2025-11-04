@@ -1,8 +1,23 @@
 import Head from 'next/head';
 
 import ChatBot from '@/components/ChatBot';
+import { useRequireAuth } from '@/hooks/useRequireAuth';
 
 const ChatPage = () => {
+  const status = useRequireAuth();
+
+  if (status === 'loading') {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <span>Loading assistant…</span>
+      </div>
+    );
+  }
+
+  if (status !== 'authenticated') {
+    return null;
+  }
+
   return (
     <>
       <Head>
