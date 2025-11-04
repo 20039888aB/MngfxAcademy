@@ -55,13 +55,20 @@ const ChatBot = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: trimmed }),
       });
+      if (!res.ok) {
+        const errorPayload = await res.text();
+        throw new Error(`HTTP ${res.status}: ${errorPayload}`);
+      }
       const data = await res.json();
       const reply = data.reply ?? 'I am still learning how to answer that.';
       setMessages((prev) => [...prev, { from: 'bot', text: reply }]);
       speak(reply);
     } catch (error) {
       console.error('ChatBot send failed', error);
-      const fallback = 'Network issue. Please try again shortly.';
+      const fallback =
+        error instanceof Error
+          ? `I could not reach the assistant (${error.message}). Please confirm the backend is running and try again.`
+          : 'I could not reach the assistant. Please confirm the backend is running and try again.';
       setMessages((prev) => [...prev, { from: 'bot', text: fallback }]);
       speak(fallback);
     }
