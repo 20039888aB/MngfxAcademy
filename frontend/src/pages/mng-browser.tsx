@@ -151,17 +151,37 @@ const MngBrowserPage = () => {
           <form onSubmit={handleSearch} style={{ display: 'grid', gap: '1rem' }}>
             <label style={{ display: 'grid', gap: '0.5rem' }}>
               <span style={{ fontWeight: 600 }}>Search the web</span>
-              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                <input
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                  placeholder="Type a market, concept, indicator, or macro theme"
-                  className="auth-input"
-                  style={{ flex: 1, minWidth: '240px' }}
-                />
-                <button className="btn-primary" type="submit" disabled={searching}>
-                  {searching ? 'Searching…' : 'Search'}
-                </button>
+              <div style={{
+                display: 'grid',
+                gap: '0.75rem',
+              }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  background: 'rgba(15, 23, 42, 0.65)',
+                  borderRadius: '18px',
+                  padding: '0.75rem 1rem',
+                  border: '1px solid rgba(148, 163, 184, 0.2)',
+                }}>
+                  <img src="/MngFx%20Academy%20logo.png" alt="MngFX" width={40} height={40} style={{ borderRadius: '10px', flexShrink: 0 }} />
+                  <input
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                    placeholder="Type a market, concept, indicator, or macro theme"
+                    className="auth-input"
+                    style={{
+                      flex: 1,
+                      minWidth: '220px',
+                      background: 'transparent',
+                      border: 'none',
+                      color: '#e2e8f0',
+                    }}
+                  />
+                  <button className="btn-primary" type="submit" disabled={searching}>
+                    {searching ? 'Searching…' : 'Search'}
+                  </button>
+                </div>
               </div>
             </label>
             {searchError && <span style={{ color: '#f87171', fontSize: '0.9rem' }}>{searchError}</span>}
