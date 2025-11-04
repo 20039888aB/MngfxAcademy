@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "apps.marketdata",
     "apps.users",
     "apps.resources",
+    "apps.feedback",
 ]
 
 
@@ -122,6 +123,9 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [
+    (BASE_DIR.parent / "frontend" / "public"),
+]
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
@@ -179,13 +183,29 @@ LOGGING = {
 }
 
 
+LIVE_SITE_URL = os.getenv("LIVE_SITE_URL", "http://localhost:3000")
+
+
 JAZZMIN_SETTINGS = {
     "site_title": "MngFX Academy Admin",
     "site_header": "MngFX Academy",
     "site_brand": "MngFX",
     "welcome_sign": "Manage MngFX Academy",
+    "site_logo": "MngFx Academy logo.png",
+    "login_logo": "MngFx Academy logo.png",
+    "site_logo_classes": "img-circle",
     "theme": "darkly",
     "custom_css": None,
     "show_ui_builder": False,
+    "custom_links": {
+        "Live": [
+            {
+                "name": "Visit Live Site",
+                "url": LIVE_SITE_URL,
+                "icon": "fas fa-external-link-alt",
+                "new_window": True,
+            }
+        ]
+    },
 }
 

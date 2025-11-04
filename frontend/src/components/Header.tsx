@@ -38,7 +38,7 @@ const Header = () => {
       >
         <Link href="/">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: 700 }}>
-            <img src="/logo.svg" alt="MngFX" width={40} height={40} />
+            <img src="/MngFx%20Academy%20logo.png" alt="MngFX" width={44} height={44} style={{ borderRadius: '12px' }} />
             <span>MngFX Academy</span>
           </div>
         </Link>
@@ -63,6 +63,9 @@ const Header = () => {
               </Link>
               <Link href="/chat" className={isActive('/chat') ? 'nav-active' : ''}>
                 AI Assistant
+              </Link>
+              <Link href="/contact" className={isActive('/contact') ? 'nav-active' : ''}>
+                Contact
               </Link>
             </>
           )}

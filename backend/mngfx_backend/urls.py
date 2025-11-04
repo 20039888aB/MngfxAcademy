@@ -10,6 +10,7 @@ urlpatterns = [
     path("api/chatbot/", include("apps.chatbot.urls")),
     path("api/auth/", include("apps.users.urls")),
     path("api/resources/", include("apps.resources.urls")),
+    path("api/feedback/", include("apps.feedback.urls")),
 ]
 
 if settings.DEBUG:

@@ -2,6 +2,7 @@ import { PropsWithChildren } from 'react';
 
 import Footer from './Footer';
 import Header from './Header';
+import FloatingChatFab from './FloatingChatFab';
 
 const Layout = ({ children }: PropsWithChildren) => {
   return (
@@ -11,6 +12,7 @@ const Layout = ({ children }: PropsWithChildren) => {
         {children}
       </main>
       <Footer />
+      <FloatingChatFab />
     </div>
   );
 };

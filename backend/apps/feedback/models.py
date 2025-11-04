@@ -1,0 +1,27 @@
+from django.conf import settings
+from django.db import models
+
+
+class FeedbackMessage(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="feedback_messages",
+    )
+    name = models.CharField(max_length=150)
+    email = models.EmailField()
+    phone = models.CharField(max_length=32, blank=True)
+    subject = models.CharField(max_length=200, blank=True)
+    message = models.TextField()
+    rating = models.PositiveSmallIntegerField(null=True, blank=True)
+    handled = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self) -> str:  # pragma: no cover - human readable only
+        return f"Feedback from {self.name}"
+

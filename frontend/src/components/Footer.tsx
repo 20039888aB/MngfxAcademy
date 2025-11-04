@@ -16,6 +16,7 @@ const Footer = () => {
               <a href="/">Home</a>
               <a href="/market">Live Charts</a>
               <a href="/chat">AI Assistant</a>
+              <a href="/contact">Contact</a>
             </div>
           </div>
           <div>
@@ -31,6 +32,15 @@ const Footer = () => {
               <a href="https://twitter.com" aria-label="Twitter" target="_blank" rel="noreferrer">🐦</a>
               <a href="https://facebook.com" aria-label="Facebook" target="_blank" rel="noreferrer">📘</a>
               <a href="mailto:hello@mngfx.academy" aria-label="Email">✉️</a>
+            </div>
+          </div>
+          <div>
+            <strong>Contact</strong>
+            <div style={{ marginTop: '0.75rem', display: 'grid', gap: '0.5rem' }}>
+              <a href="tel:+254115138594">Call +254&nbsp;115&nbsp;138&nbsp;594</a>
+              <a href="https://wa.me/254115138594?text=Hi%20MngFX%20Academy" target="_blank" rel="noreferrer">
+                Chat on WhatsApp
+              </a>
             </div>
           </div>
         </div>
