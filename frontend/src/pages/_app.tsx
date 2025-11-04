@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import type { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
 
@@ -15,6 +16,9 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 
   return (
     <SessionProvider session={session}>
+      <Head>
+        <link rel="icon" href="/MngFx%20Academy%20logo.png" />
+      </Head>
       {PageComponent.disableLayout ? content : <Layout>{content}</Layout>}
     </SessionProvider>
   );
