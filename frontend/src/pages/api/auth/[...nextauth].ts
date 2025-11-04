@@ -11,6 +11,9 @@ if (!process.env.FACEBOOK_CLIENT_ID || !process.env.FACEBOOK_CLIENT_SECRET) {
   console.warn('Missing Facebook OAuth credentials. Set FACEBOOK_CLIENT_ID and FACEBOOK_CLIENT_SECRET.');
 }
 
+const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const nextAuthSecret = process.env.NEXTAUTH_SECRET || 'development-secret-change-me';
+
 const handler = NextAuth({
   providers: [
     GoogleProvider({
@@ -28,8 +31,17 @@ const handler = NextAuth({
       if (!account) return false;
 
       try {
+        if (!apiBase) {
+          console.error('API base URL is not configured. Set NEXT_PUBLIC_API_URL.');
+          return false;
+        }
+
+        if (!account.access_token) {
+          console.warn(`No access token returned from provider ${account.provider}.`);
+        }
+
         const { data } = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/auth/social-exchange/`,
+          `${apiBase}/api/auth/social-exchange/`,
           {
             provider: account.provider,
             access_token: account.access_token,
@@ -62,7 +74,7 @@ const handler = NextAuth({
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: nextAuthSecret,
 });
 
 export default handler;
