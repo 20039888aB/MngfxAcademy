@@ -35,8 +35,18 @@ const Footer = () => {
           </div>
         </div>
         <hr style={{ borderColor: 'rgba(148, 163, 184, 0.2)' }} />
-        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', fontSize: '0.9rem', color: '#94a3b8' }}>
-          <span>© {new Date().getFullYear()} MngFX Academy. All rights reserved.</span>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '0.5rem',
+            fontSize: '0.9rem',
+            color: '#94a3b8',
+            textAlign: 'center',
+          }}
+        >
+          <span>© 2025 MngFX Academy. All rights reserved.</span>
           <span>Empowering traders with immersive education & real-time intelligence.</span>
         </div>
       </div>
