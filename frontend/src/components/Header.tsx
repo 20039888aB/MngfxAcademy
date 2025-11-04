@@ -11,6 +11,8 @@ const Header = () => {
   const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const [materialsOpen, setMaterialsOpen] = useState(false);
+  const materialsRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -21,14 +23,30 @@ const Header = () => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setMenuOpen(false);
       }
+      if (materialsRef.current && !materialsRef.current.contains(event.target as Node)) {
+        setMaterialsOpen(false);
+      }
     };
 
     window.addEventListener('mousedown', handleClickOutside);
     return () => window.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    setMaterialsOpen(false);
+    setMenuOpen(false);
+  }, [router.pathname]);
+
   const isActive = (path: string) => router.pathname === path;
-  const initials = session?.user?.name?.split(' ').slice(0, 2).map((part) => part.charAt(0)).join('').toUpperCase() || 'FX';
+  const identitySource = (session?.user?.name || '').trim() || session?.user?.email || 'FX';
+  const initials = identitySource
+    .split(/[\s@._-]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part.charAt(0).toUpperCase())
+    .join('') || 'FX';
+  const learningRoutes = ['/resources', '/today-forex-special', '/mng-browser'];
+  const isMaterialsActive = learningRoutes.includes(router.pathname);
 
   return (
     <header
@@ -74,14 +92,99 @@ const Header = () => {
               <Link href="/market" className={isActive('/market') ? 'nav-active' : ''}>
                 Live Charts
               </Link>
-              <Link href="/resources" className={isActive('/resources') ? 'nav-active' : ''}>
-                Resources
-              </Link>
+              <div ref={materialsRef} style={{ position: 'relative' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    setMaterialsOpen((prev) => !prev);
+                  }}
+                  aria-haspopup="true"
+                  aria-expanded={materialsOpen}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.45rem',
+                    padding: '0.45rem 0.9rem',
+                    borderRadius: '999px',
+                    border: '1px solid rgba(59, 130, 246, 0.35)',
+                    background: isMaterialsActive || materialsOpen ? 'rgba(59, 130, 246, 0.18)' : 'rgba(15, 23, 42, 0.35)',
+                    color: '#e2e8f0',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    minWidth: '56px',
+                  }}
+                >
+                  <span>Learning Materials</span>
+                  <span style={{ display: 'inline-block', transform: materialsOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+                    ▾
+                  </span>
+                </button>
+                {materialsOpen && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 'calc(100% + 0.6rem)',
+                      right: 0,
+                      width: '250px',
+                      background: 'rgba(15, 23, 42, 0.96)',
+                      borderRadius: '18px',
+                      padding: '1rem',
+                      boxShadow: '0 24px 48px rgba(15, 23, 42, 0.45)',
+                      border: '1px solid rgba(59, 130, 246, 0.4)',
+                      backdropFilter: 'blur(18px)',
+                      display: 'grid',
+                      gap: '0.65rem',
+                      zIndex: 50,
+                    }}
+                  >
+                    <Link
+                      href="/resources"
+                      onClick={() => setMaterialsOpen(false)}
+                      style={{
+                        padding: '0.65rem 0.75rem',
+                        borderRadius: '12px',
+                        background: 'rgba(59, 130, 246, 0.18)',
+                        color: '#bfdbfe',
+                        textDecoration: 'none',
+                        fontWeight: 600,
+                      }}
+                    >
+                      Resources Library
+                    </Link>
+                    <Link
+                      href="/today-forex-special"
+                      onClick={() => setMaterialsOpen(false)}
+                      style={{
+                        padding: '0.65rem 0.75rem',
+                        borderRadius: '12px',
+                        background: 'rgba(148, 163, 184, 0.12)',
+                        color: '#e2e8f0',
+                        textDecoration: 'none',
+                        fontWeight: 600,
+                      }}
+                    >
+                      Study Guide: Notes & Insights
+                    </Link>
+                    <Link
+                      href="/mng-browser"
+                      onClick={() => setMaterialsOpen(false)}
+                      style={{
+                        padding: '0.65rem 0.75rem',
+                        borderRadius: '12px',
+                        background: 'rgba(34, 197, 94, 0.14)',
+                        color: '#bbf7d0',
+                        textDecoration: 'none',
+                        fontWeight: 600,
+                      }}
+                    >
+                      Mng Browser
+                    </Link>
+                  </div>
+                )}
+              </div>
               <Link href="/analytics" className={isActive('/analytics') ? 'nav-active' : ''}>
                 Analytics
-              </Link>
-              <Link href="/today-forex-special" className={isActive('/today-forex-special') ? 'nav-active' : ''}>
-                Today FX Special
               </Link>
             </>
           )}

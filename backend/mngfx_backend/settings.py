@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "apps.users",
     "apps.resources",
     "apps.feedback",
+    "apps.browser",
 ]
 
 

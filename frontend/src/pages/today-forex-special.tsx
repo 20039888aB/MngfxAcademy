@@ -32,7 +32,7 @@ const TodayForexSpecialPage = () => {
   if (status === 'loading') {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <span>Preparing Today Forex Special…</span>
+        <span>Loading study guide…</span>
       </div>
     );
   }
@@ -44,7 +44,7 @@ const TodayForexSpecialPage = () => {
   return (
     <>
       <Head>
-        <title>Today Forex Special | MngFX Academy</title>
+        <title>Study Guide · Notes & Insights | MngFX Academy</title>
       </Head>
       <section
         style={{
@@ -94,7 +94,7 @@ const TodayForexSpecialPage = () => {
         >
           <header style={{ marginBottom: '1.75rem' }}>
             <p style={{ letterSpacing: '0.28em', fontSize: '0.75rem', color: 'rgba(148,163,184,0.7)', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
-              Today Forex Special — Supply & Demand Liquidity Playbook
+              Study Guide · Notes & Insights — Supply & Demand Liquidity Playbook
             </p>
             <h1 style={{ margin: 0, fontSize: '2.4rem', lineHeight: 1.15 }}>{activeSlide.title}</h1>
             {activeSlide.subtitle && (
