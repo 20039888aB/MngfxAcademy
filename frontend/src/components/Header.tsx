@@ -37,6 +37,12 @@ const Header = () => {
     setMenuOpen(false);
   }, [router.pathname]);
 
+  const navigate = (path: string) => {
+    setMenuOpen(false);
+    setMaterialsOpen(false);
+    router.push(path);
+  };
+
   const isActive = (path: string) => router.pathname === path;
   const identitySource = (session?.user?.name || '').trim() || session?.user?.email || 'FX';
   const initials = identitySource
@@ -138,48 +144,54 @@ const Header = () => {
                       zIndex: 50,
                     }}
                   >
-                    <Link
-                      href="/resources"
-                      onClick={() => setMaterialsOpen(false)}
+                    <button
+                      type="button"
+                      onClick={() => navigate('/resources')}
                       style={{
                         padding: '0.65rem 0.75rem',
                         borderRadius: '12px',
                         background: 'rgba(59, 130, 246, 0.18)',
                         color: '#bfdbfe',
-                        textDecoration: 'none',
+                        border: 'none',
+                        textAlign: 'left',
                         fontWeight: 600,
+                        cursor: 'pointer',
                       }}
                     >
                       Resources Library
-                    </Link>
-                    <Link
-                      href="/study-guide"
-                      onClick={() => setMaterialsOpen(false)}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => navigate('/study-guide')}
                       style={{
                         padding: '0.65rem 0.75rem',
                         borderRadius: '12px',
                         background: 'rgba(148, 163, 184, 0.12)',
                         color: '#e2e8f0',
-                        textDecoration: 'none',
+                        border: 'none',
+                        textAlign: 'left',
                         fontWeight: 600,
+                        cursor: 'pointer',
                       }}
                     >
                       Study Guide: Notes & Insights
-                    </Link>
-                    <Link
-                      href="/mng-browser"
-                      onClick={() => setMaterialsOpen(false)}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => navigate('/mng-browser')}
                       style={{
                         padding: '0.65rem 0.75rem',
                         borderRadius: '12px',
                         background: 'rgba(34, 197, 94, 0.14)',
                         color: '#bbf7d0',
-                        textDecoration: 'none',
+                        border: 'none',
+                        textAlign: 'left',
                         fontWeight: 600,
+                        cursor: 'pointer',
                       }}
                     >
                       Mng Browser
-                    </Link>
+                    </button>
                   </div>
                 )}
               </div>
@@ -274,36 +286,54 @@ const Header = () => {
                     </div>
                   </div>
                   <div style={{ display: 'grid', gap: '0.65rem' }}>
-                    <Link
-                      href="/profile"
+                    <button
+                      type="button"
+                      onClick={() => navigate('/profile')}
                       style={{
-                        display: 'block',
                         padding: '0.65rem 0.85rem',
                         borderRadius: '12px',
                         background: 'rgba(59, 130, 246, 0.15)',
                         color: '#38bdf8',
-                        textDecoration: 'none',
+                        border: 'none',
+                        textAlign: 'left',
                         fontWeight: 600,
+                        cursor: 'pointer',
                       }}
-                      onClick={() => setMenuOpen(false)}
                     >
                       Manage profile
-                    </Link>
-                    <Link
-                      href="/analytics"
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => navigate('/analytics')}
                       style={{
-                        display: 'block',
                         padding: '0.65rem 0.85rem',
                         borderRadius: '12px',
                         background: 'rgba(148, 163, 184, 0.12)',
                         color: '#e2e8f0',
-                        textDecoration: 'none',
+                        border: 'none',
+                        textAlign: 'left',
                         fontWeight: 500,
+                        cursor: 'pointer',
                       }}
-                      onClick={() => setMenuOpen(false)}
                     >
                       View analytics
-                    </Link>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => navigate('/contact')}
+                      style={{
+                        padding: '0.65rem 0.85rem',
+                        borderRadius: '12px',
+                        background: 'rgba(34, 197, 94, 0.2)',
+                        color: '#bbf7d0',
+                        border: 'none',
+                        textAlign: 'left',
+                        fontWeight: 500,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Leave an enquiry
+                    </button>
                   </div>
                   <button
                     type="button"
