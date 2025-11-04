@@ -45,7 +45,7 @@ const Header = () => {
     .slice(0, 2)
     .map((part) => part.charAt(0).toUpperCase())
     .join('') || 'FX';
-  const learningRoutes = ['/resources', '/today-forex-special', '/mng-browser'];
+  const learningRoutes = ['/resources', '/today-forex-special', '/study-guide', '/mng-browser'];
   const isMaterialsActive = learningRoutes.includes(router.pathname);
 
   return (
@@ -153,7 +153,7 @@ const Header = () => {
                       Resources Library
                     </Link>
                     <Link
-                      href="/today-forex-special"
+                      href="/study-guide"
                       onClick={() => setMaterialsOpen(false)}
                       style={{
                         padding: '0.65rem 0.75rem',
