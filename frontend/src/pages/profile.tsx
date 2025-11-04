@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import imageCompression from 'browser-image-compression';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 
@@ -20,6 +21,8 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [formState, setFormState] = useState({ nickname: '', bio: '' });
+  const [avatarFeedback, setAvatarFeedback] = useState<string | null>(null);
+  const [avatarUploading, setAvatarUploading] = useState(false);
 
   const token = session?.djangoTokens?.access;
 
@@ -82,11 +85,19 @@ const ProfilePage = () => {
 
   const handleAvatarUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     if (!token || !event.target.files?.length) return;
-    const file = event.target.files[0];
+    let file = event.target.files[0];
     const data = new FormData();
-    data.append('avatar', file);
-    setSaving(true);
+    setAvatarFeedback(null);
+    setAvatarUploading(true);
     try {
+      if (file.size > 10 * 1024 * 1024) {
+        file = await imageCompression(file, {
+          maxSizeMB: 8,
+          maxWidthOrHeight: 1200,
+          useWebWorker: true,
+        });
+      }
+      data.append('avatar', file);
       const response = await fetch(`${apiBase}/api/auth/profile/`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` },
@@ -97,10 +108,12 @@ const ProfilePage = () => {
       }
       await fetchProfile();
       await update();
+      setAvatarFeedback('Avatar updated successfully.');
     } catch (error) {
       console.error(error);
+      setAvatarFeedback('Failed to upload avatar. Try a different image.');
     } finally {
-      setSaving(false);
+      setAvatarUploading(false);
       event.target.value = '';
     }
   };
@@ -129,31 +142,47 @@ const ProfilePage = () => {
         <p className="section-subtitle">Update your trading persona, avatar and preferences.</p>
 
         <div className="card" style={{ display: 'grid', gap: '2rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+          <div style={{ display: 'grid', justifyItems: 'center', gap: '1.25rem' }}>
             <div
               style={{
-                width: '96px',
-                height: '96px',
+                width: '140px',
+                height: '140px',
                 borderRadius: '50%',
                 background: 'rgba(148,163,184,0.25)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 overflow: 'hidden',
+                boxShadow: '0 24px 40px rgba(15, 23, 42, 0.18)',
               }}
             >
               {avatarSrc ? (
-                <img src={avatarSrc} alt="Avatar" width={96} height={96} style={{ objectFit: 'cover' }} />
+                <img src={avatarSrc} alt="Avatar" width={140} height={140} style={{ objectFit: 'cover' }} />
               ) : (
-                <span style={{ fontSize: '1.5rem', color: '#64748b' }}>
+                <span style={{ fontSize: '2rem', color: '#64748b' }}>
                   {session?.user?.name?.slice(0, 2).toUpperCase() || 'FX'}
                 </span>
               )}
             </div>
-            <div>
-              <p style={{ color: '#64748b', marginBottom: '0.5rem' }}>Change avatar</p>
-              <input type="file" accept="image/*" onChange={handleAvatarUpload} />
-              <p style={{ fontSize: '0.8rem', color: '#94a3b8' }}>PNG, JPG up to 5MB.</p>
+            <div style={{ textAlign: 'center' }}>
+              <h2 style={{ margin: 0 }}>{session?.user?.name || profile.nickname || profile.email}</h2>
+              {profile.nickname && (
+                <p style={{ marginTop: '0.25rem', color: '#64748b' }}>Alias: {profile.nickname}</p>
+              )}
+            </div>
+            <div style={{ display: 'grid', gap: '0.5rem', textAlign: 'center' }}>
+              <label
+                htmlFor="avatar-upload"
+                className="btn-primary"
+                style={{ cursor: 'pointer', padding: '0.5rem 1.25rem', display: 'inline-block' }}
+              >
+                {avatarUploading ? 'Uploading…' : 'Upload new avatar'}
+              </label>
+              <input id="avatar-upload" type="file" accept="image/*" onChange={handleAvatarUpload} hidden />
+              <p style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
+                PNG / JPG up to 10MB. Larger files are auto-compressed before upload.
+              </p>
+              {avatarFeedback && <p style={{ fontSize: '0.85rem', color: '#38bdf8' }}>{avatarFeedback}</p>}
             </div>
           </div>
 
