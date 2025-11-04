@@ -20,7 +20,7 @@ const FloatingChatFab = () => {
       aria-label="Open AI assistant"
       style={{
         position: 'fixed',
-        bottom: '2.5rem',
+        bottom: '9.5rem',
         right: '2.5rem',
         width: '64px',
         height: '64px',

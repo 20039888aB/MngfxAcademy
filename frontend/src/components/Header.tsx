@@ -9,8 +9,8 @@ const Header = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
-  const [contactOpen, setContactOpen] = useState(false);
-  const contactRef = useRef<HTMLDivElement | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -18,8 +18,8 @@ const Header = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (contactRef.current && !contactRef.current.contains(event.target as Node)) {
-        setContactOpen(false);
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
       }
     };
 
@@ -28,6 +28,7 @@ const Header = () => {
   }, []);
 
   const isActive = (path: string) => router.pathname === path;
+  const initials = session?.user?.name?.split(' ').slice(0, 2).map((part) => part.charAt(0)).join('').toUpperCase() || 'FX';
 
   return (
     <header
@@ -82,99 +83,156 @@ const Header = () => {
               <Link href="/today-forex-special" className={isActive('/today-forex-special') ? 'nav-active' : ''}>
                 Today FX Special
               </Link>
-              <Link href="/profile" className={isActive('/profile') ? 'nav-active' : ''}>
-                Profile
-              </Link>
-              <div ref={contactRef} style={{ position: 'relative' }}>
-                <button
-                  type="button"
-                  onClick={() => setContactOpen((prev) => !prev)}
-                  aria-haspopup="true"
-                  aria-expanded={contactOpen}
-                  aria-label="Contact options"
-                  style={{
-                    background: 'rgba(59, 130, 246, 0.18)',
-                    border: '1px solid rgba(59, 130, 246, 0.4)',
-                    color: '#2563eb',
-                    padding: '0.55rem 0.85rem',
-                    borderRadius: '999px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.45rem',
-                    cursor: 'pointer',
-                    minWidth: '48px',
-                  }}
-                >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M5.5 3.5C5.5 3.22386 5.72386 3 6 3H9.1C9.32559 3 9.51947 3.14926 9.57639 3.36754L10.8764 8.36754C10.9399 8.61618 10.8122 8.87322 10.5764 8.97361L8.57071 9.82353C9.48054 12.2774 11.7226 14.5195 14.1765 15.4293L15.0264 13.4236C15.1268 13.1878 15.3838 13.0601 15.6325 13.1236L20.6325 14.4236C20.8507 14.4805 21 14.6744 21 14.9V18C21 18.2761 20.7761 18.5 20.5 18.5H18C11.3726 18.5 5.5 12.6274 5.5 6V3.5Z"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>Contact</span>
-                </button>
-                {contactOpen && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: 'calc(100% + 0.5rem)',
-                      right: 0,
-                      width: '220px',
-                      background: 'rgba(15, 23, 42, 0.92)',
-                      borderRadius: '18px',
-                      padding: '1rem',
-                      boxShadow: '0 25px 50px rgba(15, 23, 42, 0.35)',
-                      backdropFilter: 'blur(18px)',
-                      border: '1px solid rgba(59, 130, 246, 0.35)',
-                      display: 'grid',
-                      gap: '0.75rem',
-                      zIndex: 30,
-                    }}
-                  >
-                    <a href="tel:+254115138594" style={{ color: '#e0f2fe', textDecoration: 'none' }}>
-                      📞 Call +254&nbsp;115&nbsp;138&nbsp;594
-                    </a>
-                    <a
-                      href="https://wa.me/254115138594?text=Hi%20MngFX%20Academy"
-                      target="_blank"
-                      rel="noreferrer"
-                      style={{ color: '#e0f2fe', textDecoration: 'none' }}
-                    >
-                      💬 WhatsApp Chat
-                    </a>
-                    <Link href="/contact" style={{ color: '#38bdf8', textDecoration: 'none' }}>
-                      ✉️ Leave a review
-                    </Link>
-                  </div>
-                )}
-              </div>
             </>
           )}
         </nav>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           <ThemeToggle />
-          {mounted && (
-            <button
-              className="btn-primary"
-              style={{ padding: '0.5rem 1.2rem', fontSize: '0.95rem' }}
-              onClick={() => (status === 'authenticated' ? signOut() : signIn())}
-            >
-              {status === 'authenticated' ? 'Sign out' : 'Sign in'}
-            </button>
-          )}
-          {status === 'authenticated' && session?.user?.name && (
-            <span style={{ fontSize: '0.9rem', color: '#64748b' }}>{session.user.name}</span>
+          {status === 'authenticated' ? (
+            <div ref={menuRef} style={{ position: 'relative' }}>
+              <button
+                type="button"
+                onClick={() => setMenuOpen((prev) => !prev)}
+                aria-haspopup="true"
+                aria-expanded={menuOpen}
+                aria-label="Account menu"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.65rem',
+                  background: 'rgba(15, 23, 42, 0.55)',
+                  border: '1px solid rgba(148, 163, 184, 0.3)',
+                  padding: '0.45rem 0.85rem',
+                  borderRadius: '999px',
+                  color: '#e2e8f0',
+                  cursor: 'pointer',
+                  minWidth: '56px',
+                }}
+              >
+                <span
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    background: 'rgba(59, 130, 246, 0.2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 600,
+                  }}
+                >
+                  {initials}
+                </span>
+                <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>{session?.user?.name || 'Account'}</span>
+                <span style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                  <span style={{ width: '14px', height: '2px', background: '#e2e8f0', borderRadius: '999px' }} />
+                  <span style={{ width: '14px', height: '2px', background: '#e2e8f0', borderRadius: '999px' }} />
+                  <span style={{ width: '14px', height: '2px', background: '#e2e8f0', borderRadius: '999px' }} />
+                </span>
+              </button>
+              {menuOpen && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 0.75rem)',
+                    right: 0,
+                    width: '260px',
+                    background: 'rgba(15, 23, 42, 0.96)',
+                    borderRadius: '20px',
+                    padding: '1.25rem',
+                    boxShadow: '0 28px 60px rgba(15, 23, 42, 0.45)',
+                    backdropFilter: 'blur(18px)',
+                    border: '1px solid rgba(59, 130, 246, 0.4)',
+                    display: 'grid',
+                    gap: '1rem',
+                    zIndex: 60,
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                    <span
+                      style={{
+                        width: '52px',
+                        height: '52px',
+                        borderRadius: '50%',
+                        background: 'rgba(59, 130, 246, 0.2)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontWeight: 700,
+                        fontSize: '1.1rem',
+                      }}
+                    >
+                      {initials}
+                    </span>
+                    <div>
+                      <strong style={{ display: 'block', color: '#e2e8f0' }}>{session?.user?.name || 'Trader'}</strong>
+                      <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>{session?.user?.email}</span>
+                    </div>
+                  </div>
+                  <div style={{ display: 'grid', gap: '0.65rem' }}>
+                    <Link
+                      href="/profile"
+                      style={{
+                        display: 'block',
+                        padding: '0.65rem 0.85rem',
+                        borderRadius: '12px',
+                        background: 'rgba(59, 130, 246, 0.15)',
+                        color: '#38bdf8',
+                        textDecoration: 'none',
+                        fontWeight: 600,
+                      }}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Manage profile
+                    </Link>
+                    <Link
+                      href="/analytics"
+                      style={{
+                        display: 'block',
+                        padding: '0.65rem 0.85rem',
+                        borderRadius: '12px',
+                        background: 'rgba(148, 163, 184, 0.12)',
+                        color: '#e2e8f0',
+                        textDecoration: 'none',
+                        fontWeight: 500,
+                      }}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      View analytics
+                    </Link>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      signOut();
+                    }}
+                    style={{
+                      padding: '0.65rem 0.85rem',
+                      borderRadius: '12px',
+                      background: 'linear-gradient(135deg, #f87171, #ef4444)',
+                      color: '#fff',
+                      border: 'none',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Sign out
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            mounted && (
+              <button
+                className="btn-primary"
+                style={{ padding: '0.5rem 1.2rem', fontSize: '0.95rem' }}
+                onClick={() => signIn()}
+              >
+                Sign in
+              </button>
+            )
           )}
         </div>
       </div>
