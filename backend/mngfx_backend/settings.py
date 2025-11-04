@@ -15,6 +15,7 @@ ALLOWED_HOSTS = [host for host in os.getenv("ALLOWED_HOSTS", "*").split(",") if 
 
 
 INSTALLED_APPS = [
+    "jazzmin",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -174,5 +175,16 @@ AUTHENTICATION_BACKENDS = [
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+}
+
+
+JAZZMIN_SETTINGS = {
+    "site_title": "MngFX Academy Admin",
+    "site_header": "MngFX Academy",
+    "site_brand": "MngFX",
+    "welcome_sign": "Manage MngFX Academy",
+    "theme": "darkly",
+    "custom_css": None,
+    "show_ui_builder": False,
 }
 
