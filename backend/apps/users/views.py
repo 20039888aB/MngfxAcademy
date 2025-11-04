@@ -1,4 +1,6 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -6,6 +8,68 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 
 User = get_user_model()
+
+
+def _issue_tokens_for_user(user, provider="credentials"):
+    refresh = RefreshToken.for_user(user)
+    return {
+        "access": str(refresh.access_token),
+        "refresh": str(refresh),
+        "user": {
+            "id": user.id,
+            "email": user.email,
+            "name": (user.first_name or user.username or user.email),
+            "provider": provider,
+        },
+    }
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def register(request):
+    email = (request.data.get("email") or "").strip().lower()
+    password = request.data.get("password") or ""
+    first_name = (request.data.get("first_name") or request.data.get("firstName") or "").strip()
+    last_name = (request.data.get("last_name") or request.data.get("lastName") or "").strip()
+
+    if not email or not password or not first_name or not last_name:
+        return Response({"error": "first_name, last_name, email and password are required"}, status=400)
+
+    if User.objects.filter(email__iexact=email).exists():
+        return Response({"error": "An account with this email already exists."}, status=400)
+
+    try:
+        validate_password(password)
+    except ValidationError as exc:
+        return Response({"error": exc.messages[0] if exc.messages else "Password validation failed"}, status=400)
+
+    user = User.objects.create_user(
+        username=email,
+        email=email,
+        first_name=first_name,
+        last_name=last_name,
+        password=password,
+    )
+
+    tokens = _issue_tokens_for_user(user)
+    return Response(tokens, status=201)
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def credentials_login(request):
+    email = (request.data.get("email") or "").strip().lower()
+    password = request.data.get("password") or ""
+
+    if not email or not password:
+        return Response({"error": "email and password required"}, status=400)
+
+    user = authenticate(request, username=email, password=password)
+    if not user:
+        return Response({"error": "Invalid email or password"}, status=400)
+
+    tokens = _issue_tokens_for_user(user)
+    return Response(tokens)
 
 
 @api_view(["POST"])
@@ -17,8 +81,8 @@ def social_exchange(request):
     access_token = request.data.get("access_token")
     profile = request.data.get("profile") or {}
 
-    email = profile.get("email") or ""
-    name = profile.get("name") or ""
+    email = (profile.get("email") or "").strip().lower()
+    name = (profile.get("name") or "").strip()
 
     if not provider:
         return Response({"error": "provider required"}, status=400)
@@ -49,19 +113,6 @@ def social_exchange(request):
         if update_fields:
             user.save(update_fields=update_fields)
 
-    refresh = RefreshToken.for_user(user)
-
-    # TODO: validate provider access_token against provider APIs for production use.
-    return Response(
-        {
-            "access": str(refresh.access_token),
-            "refresh": str(refresh),
-            "user": {
-                "id": user.id,
-                "email": user.email,
-                "name": user.first_name or user.username,
-                "provider": provider,
-            },
-        }
-    )
+    tokens = _issue_tokens_for_user(user, provider=provider)
+    return Response(tokens)
 

@@ -37,21 +37,37 @@ if (process.env.FACEBOOK_CLIENT_ID && process.env.FACEBOOK_CLIENT_SECRET) {
 
 providers.push(
   CredentialsProvider({
-    name: 'Email Login (Dev)',
+    name: 'Email Login',
     credentials: {
       email: { label: 'Email', type: 'email', placeholder: 'you@example.com' },
-      name: { label: 'Name', type: 'text', placeholder: 'Trader Jane' },
+      password: { label: 'Password', type: 'password' },
+      name: { label: 'Name', type: 'text' },
     },
     async authorize(credentials) {
-      if (!credentials?.email) {
+      if (!credentials?.email || !credentials.password) {
         return null;
       }
 
-      return {
-        id: credentials.email,
-        email: credentials.email,
-        name: credentials.name || credentials.email.split('@')[0],
-      };
+      try {
+        const { data } = await axios.post(
+          `${apiBase}/api/auth/login/`,
+          {
+            email: credentials.email,
+            password: credentials.password,
+          },
+          { withCredentials: true }
+        );
+
+        return {
+          id: String(data.user.id),
+          email: data.user.email,
+          name: data.user.name || credentials.name || data.user.email,
+          tokens: data,
+        } as any;
+      } catch (error) {
+        console.error('Credential login failed', error);
+        return null;
+      }
     },
   })
 );
@@ -63,11 +79,11 @@ const handler = NextAuth({
     async signIn({ user, account }) {
       if (!account) return false;
 
-      try {
-        if (!apiBase) {
-          throw new Error('API base URL is not configured.');
-        }
+      if (account.provider === 'credentials') {
+        return Boolean(user);
+      }
 
+      try {
         const { data } = await axios.post(
           `${apiBase}/api/auth/social-exchange/`,
           {
@@ -89,8 +105,10 @@ const handler = NextAuth({
         return false;
       }
     },
-    async jwt({ token, account }) {
-      if (account && (account as any).djangoTokens) {
+    async jwt({ token, account, user }) {
+      if (user && (user as any).tokens) {
+        token.djangoTokens = (user as any).tokens;
+      } else if (account && (account as any).djangoTokens) {
         token.djangoTokens = (account as any).djangoTokens;
       }
       return token;

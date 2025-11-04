@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 
 const errorMessages: Record<string, string> = {
@@ -18,17 +19,44 @@ const AuthErrorPage = () => {
   const message = errorMessages[error] ?? errorMessages.default;
 
   return (
-    <div className="container" style={{ padding: '6rem 0' }}>
-      <div className="card" style={{ maxWidth: 480, margin: '0 auto', textAlign: 'center' }}>
-        <h1 style={{ marginBottom: '1rem' }}>Sign-in Error</h1>
-        <p style={{ marginBottom: '2rem', color: '#dc2626' }}>{message}</p>
-        <button className="btn-primary" onClick={() => push('/auth/signin')}>
-          Back to Sign in
-        </button>
+    <>
+      <Head>
+        <title>Sign-in error — MngFX Academy</title>
+      </Head>
+      <div
+        className="auth-page"
+        style={{
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+          ['--auth-active-bg' as string]: 'var(--auth-bg-image-signin)',
+        }}
+      >
+        <div className="auth-background" />
+        <div className="auth-aurora auth-aurora--one" />
+        <div className="auth-aurora auth-aurora--two" />
+
+        <div className="auth-container">
+          <section className="auth-card" style={{ textAlign: 'center' }}>
+            <header className="auth-card-header" style={{ marginBottom: '1.5rem' }}>
+              <div className="auth-logo">
+                <img src="/logo.svg" alt="MngFX" width={32} height={32} />
+              </div>
+              <h1 className="auth-title">Sign-in error</h1>
+              <p className="auth-subtitle" style={{ color: '#f87171' }}>
+                {message}
+              </p>
+            </header>
+
+            <button type="button" className="auth-button" onClick={() => push('/auth/signin')}>
+              Back to sign in
+            </button>
+          </section>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
+
+AuthErrorPage.disableLayout = true;
 
 export default AuthErrorPage;
 
