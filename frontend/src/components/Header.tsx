@@ -58,6 +58,9 @@ const Header = () => {
               <Link href="/analytics" className={isActive('/analytics') ? 'nav-active' : ''}>
                 Analytics
               </Link>
+              <Link href="/today-forex-special" className={isActive('/today-forex-special') ? 'nav-active' : ''}>
+                Today FX Special
+              </Link>
               <Link href="/profile" className={isActive('/profile') ? 'nav-active' : ''}>
                 Profile
               </Link>
