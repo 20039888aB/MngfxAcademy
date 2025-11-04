@@ -20,8 +20,12 @@ def social_exchange(request):
     email = profile.get("email") or ""
     name = profile.get("name") or ""
 
-    if not provider or not access_token:
-        return Response({"error": "provider and access_token required"}, status=400)
+    if not provider:
+        return Response({"error": "provider required"}, status=400)
+
+    providers_requiring_token = {"google", "facebook"}
+    if provider in providers_requiring_token and not access_token:
+        return Response({"error": "access_token required for OAuth providers"}, status=400)
 
     if not email:
         return Response({"error": "email required"}, status=400)
