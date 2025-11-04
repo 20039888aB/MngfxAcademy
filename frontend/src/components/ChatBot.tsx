@@ -67,6 +67,11 @@ const ChatBot = () => {
     }
   };
 
+  const handleClear = () => {
+    setMessages([]);
+    synthesis.current?.cancel();
+  };
+
   const onSubmit = (event: FormEvent) => {
     event.preventDefault();
     handleSend(input);
@@ -88,6 +93,23 @@ const ChatBot = () => {
 
   return (
     <div className="card chat-container">
+      <div className="flex" style={{ justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+        <span style={{ fontWeight: 600 }}>Conversation</span>
+        <button
+          type="button"
+          onClick={handleClear}
+          style={{
+            border: 'none',
+            background: 'rgba(148, 163, 184, 0.2)',
+            color: 'inherit',
+            padding: '0.35rem 0.75rem',
+            borderRadius: '999px',
+            cursor: 'pointer',
+          }}
+        >
+          Clear chat
+        </button>
+      </div>
       <div className="chat-messages">
         {messages.length === 0 && (
           <p style={{ color: '#94a3b8', textAlign: 'center' }}>
